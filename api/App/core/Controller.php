@@ -10,9 +10,7 @@ abstract class Controller
         $this->db = $db;
     }
 
-    // -------------------------------------------------------------------------
-    // Existing request helpers (unchanged)
-    // -------------------------------------------------------------------------
+   
 
     protected function getMethod(): string
     {
@@ -40,10 +38,6 @@ abstract class Controller
         return Session::getUserRole();
     }
 
-    // -------------------------------------------------------------------------
-    // Existing auth guards (unchanged)
-    // -------------------------------------------------------------------------
-
     protected function requireAuth(): void
     {
         if (!Session::isAuthenticated()) {
@@ -61,18 +55,7 @@ abstract class Controller
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Fix 8 — Role re-validation from database
-    // -------------------------------------------------------------------------
-
-    /**
-     * Re-fetches the authenticated user's role from the database and updates
-     * the session. If the user no longer exists, the session is destroyed.
-     *
-     * Usage: call $this->refreshSessionRole() at the top of any admin-only or
-     * doctor-only action where stale privilege escalation is a concern.
-     * Not called on every request to avoid unnecessary DB queries.
-     */
+    
     protected function refreshSessionRole(): void
     {
         $userId = $this->getUserId();
@@ -96,38 +79,5 @@ abstract class Controller
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Fix 9 — CSRF token verification
-    // -------------------------------------------------------------------------
-
-    /**
-     * Validates the CSRF token for state-changing requests (POST, PUT, DELETE).
-     *
-     * The token must be sent by the frontend in the X-CSRF-Token request header
-     * or as a '_csrf' field in the JSON body.
-     *
-     * The CSRF token is included in login and checkSession responses so the
-     * frontend can read and store it for subsequent requests.
-     *
-     * NOTE: SameSite=Strict on the session cookie already provides primary CSRF
-     * protection. This method provides defence-in-depth. Call it from any
-     * controller action that modifies data once the frontend sends the header:
-     *
-     *   $this->verifyCsrf();
-     *
-     * It is intentionally not auto-called from every POST/PUT/DELETE to avoid
-     * breaking the existing frontend before it is updated to send the token.
-     */
-    protected function verifyCsrf(): void
-    {
-        // Accept token from custom header (preferred) or request body
-        $token = $_SERVER['HTTP_X_CSRF_TOKEN']
-              ?? $this->getInput()['_csrf']
-              ?? '';
-
-        if (!Session::validateCsrfToken($token)) {
-            Response::error("Invalid or missing security token. Please refresh and try again.", 403);
-        }
-    }
-}
-
+   
+   
