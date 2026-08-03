@@ -10,14 +10,5 @@ class Response
         exit();
     }
 
-    public static function success(string $message, array $extra = [], int $statusCode = 200): void
-    {
-        $payload = array_merge(["success" => true, "message" => $message], $extra);
-        self::json($payload, $statusCode);
-    }
-
-    public static function error(string $message, int $statusCode = 400): void
-    {
-        self::json(["error" => $message], $statusCode);
-    }
+   
 }
