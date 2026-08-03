@@ -80,4 +80,15 @@ abstract class Controller
     }
 
    
-   
+    protected function verifyCsrf(): void
+    {
+        $token = $_SERVER['HTTP_X_CSRF_TOKEN']
+              ?? $this->getInput()['_csrf']
+              ?? '';
+
+        if (!Session::validateCsrfToken($token)) {
+            Response::error("Invalid or missing security token. Please refresh and try again.", 403);
+        }
+    }
+}
+
