@@ -9,6 +9,8 @@ export default function PatientDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
 
   useEffect(() => {
     fetchAppointments();
@@ -27,25 +29,36 @@ export default function PatientDashboard() {
     }
   };
 
-  const handleCancel = async (apptId) => {
-    if (!window.confirm('Are you sure you want to cancel this appointment?')) return;
+const openCancelModal = (apptId) => {
+    setSelectedAppointmentId(apptId);
+    setCancelModalOpen(true);
+  };
 
+  const closeCancelModal = () => {
+    setCancelModalOpen(false);
+    setSelectedAppointmentId(null);
+  };
+
+  const confirmCancel = async () => {
+    if (!selectedAppointmentId) return;
+    setCancelModalOpen(false);
     setActionLoading(true);
     setError('');
+
     try {
       await apiFetch('/appointments.php', {
         method: 'PUT',
         body: JSON.stringify({
-          appointment_id: apptId,
+          appointment_id: selectedAppointmentId,
           status: 'cancelled'
         })
       });
-      // Refresh list
       await fetchAppointments();
     } catch (err) {
       setError(err.message || 'Failed to cancel appointment.');
     } finally {
       setActionLoading(false);
+      setSelectedAppointmentId(null);
     }
   };
 
@@ -171,7 +184,7 @@ export default function PatientDashboard() {
                             gap: '0.25rem',
                             boxShadow: 'none'
                           }}
-                          onClick={() => handleCancel(appt.id)}
+                          onClick={() => openCancelModal(appt.id)}
                           disabled={actionLoading}
                         >
                           <XCircle size={14} /> Cancel
@@ -187,6 +200,51 @@ export default function PatientDashboard() {
           </div>
         )}
       </div>
+      {cancelModalOpen && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(15, 23, 42, 0.45)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '1rem',
+          zIndex: 999
+        }}>
+          <div style={{
+            width: '100%',
+            maxWidth: '460px',
+            background: 'rgba(255, 255, 255, 0.98)',
+            borderRadius: '22px',
+            padding: '2rem',
+            boxShadow: '0 24px 60px rgba(15, 23, 42, 0.2)',
+            border: '1px solid rgba(15, 23, 42, 0.08)'
+          }}>
+            <h3 style={{ margin: 0, marginBottom: '0.75rem' }}>Cancel Appointment</h3>
+            <p style={{ color: 'var(--text-muted)', lineHeight: 1.7 }}>
+              Are you sure you want to cancel this appointment?
+            </p>
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '1.75rem' }}>
+              <button
+                className="btn btn-secondary"
+                type="button"
+                onClick={closeCancelModal}
+              >
+                No, keep it
+              </button>
+              <button
+                className="btn btn-danger"
+                type="button"
+                onClick={confirmCancel}
+                disabled={actionLoading}
+              >
+                Yes, cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
 
     </div>
   );
