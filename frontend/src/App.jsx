@@ -314,7 +314,7 @@ function AppLayout({ children }) {
               <>
                 <Link to="/admin" className={`nav-link ${location.pathname === '/admin' ? 'active' : ''}`}>Control Panel</Link>
                 <Link to="/admin/appointments" className={`nav-link ${location.pathname === '/admin/appointments' ? 'active' : ''}`}>Appointments</Link>
-                <Link to="/admin/doctors" className={`nav-link ${location.pathname === '/admin/doctors' ? 'active' : ''}`}>Roster</Link>
+                <Link to="/admin/doctors" className={`nav-link ${location.pathname === '/admin/doctors' ? 'active' : ''}`}>Manage Doctors</Link>
                 <Link to="/admin/departments" className={`nav-link ${location.pathname === '/admin/departments' ? 'active' : ''}`}>Depts</Link>
               </>
             )}
@@ -375,7 +375,7 @@ function AppLayout({ children }) {
               <>
                 <Link to="/admin">Control Panel</Link>
                 <Link to="/admin/appointments">Appointments</Link>
-                <Link to="/admin/doctors">Roster</Link>
+                <Link to="/admin/doctors">Manage Doctors</Link>
                 <Link to="/admin/departments">Depts</Link>
               </>
             )}
@@ -460,7 +460,7 @@ function AppLayout({ children }) {
           </div>
           <div style={{ display: 'flex', gap: '1.5rem' }}>
             <Link to="/" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Home</Link>
-            <Link to="/doctors" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Roster</Link>
+            <Link to="/doctors" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Manage Doctors</Link>
             <Link to="/contact" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Support</Link>
           </div>
         </div>
